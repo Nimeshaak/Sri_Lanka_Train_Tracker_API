@@ -1,0 +1,58 @@
+
+Creating a new React app in C:\Users\PCSM\Documents\Sri_Lanka_Train_Tracker_API\dashboard.
+
+Installing packages. This might take a couple of minutes.
+Installing react, react-dom, and react-scripts with cra-template...
+
+
+added 1479 packages in 3m
+
+261 packages are looking for funding
+  run `npm fund` for details
+
+Installing template dependencies using npm...
+
+added 63 packages, and changed 1 package in 18s
+
+261 packages are looking for funding
+  run `npm fund` for details
+Removing template package using npm...
+
+
+removed 1 package, and audited 1542 packages in 17s
+
+261 packages are looking for funding
+  run `npm fund` for details
+
+53 vulnerabilities (47 moderate, 6 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+Success! Created dashboard at C:\Users\PCSM\Documents\Sri_Lanka_Train_Tracker_API\dashboard
+Inside that directory, you can run several commands:
+
+  npm start
+    Starts the development server.
+
+  npm run build
+    Bundles the app into static files for production.
+
+  npm test
+    Starts the test runner.
+
+  npm run eject
+    Removes this tool and copies build dependencies, configuration files
+    and scripts into the app directory. If you do this, you can’t go back!
+
+We suggest that you begin by typing:
+
+  cd dashboard
+  npm start
+
+Happy hacking!

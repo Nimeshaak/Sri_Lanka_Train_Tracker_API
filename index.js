@@ -1,9 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const Train = require('./models/train');
 
 const app = express();
 const PORT = 3000;
+
+app.use(cors());
 
 // MongoDB connection
 mongoose.connect('mongodb://localhost/train_tracking', {
