@@ -1,123 +1,139 @@
-const { faker } = require('@faker-js/faker');
-const axios = require('axios');
+const fs = require('fs');
+const mongoose = require('mongoose');
+const Train = require('../models/trainschema'); 
+const Route = require('../models/routeschema'); 
 
-function moveTrainWithinSriLanka(train) {
-  const speed = 0.005; 
+mongoose.connect('mongodb://localhost:27017/trainDB', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
-  const randomCurve = faker.number.float({ min: -0.001, max: 0.001 });
-  const directionChange = faker.number.float({ min: -0.0005, max: 0.0005 });
+const railwayGeoJSON = JSON.parse(fs.readFileSync('railwayPath.geojson', 'utf8'));
+const allPathCoordinates = railwayGeoJSON.features.map(feature => feature.geometry.coordinates);
 
-  train.directionLat += directionChange;
-  train.directionLon += directionChange;
-
-  let deltaLat = speed * train.directionLat + randomCurve;
-  let deltaLon = speed * train.directionLon + randomCurve;
-
-  let newLat = train.latitude + deltaLat;
-  let newLon = train.longitude + deltaLon;
-
-  if (newLat < 5.8 || newLat > 9.8) {
-    deltaLat *= -1; 
-    newLat = train.latitude + deltaLat;
+const trains = {
+  1: {
+    id: 1,
+    name: "Train A",
+    pathCoordinates: allPathCoordinates[0],
+    latitude: allPathCoordinates[0][0][1], 
+    longitude: allPathCoordinates[0][0][0], 
+    active: true,
+    pathIndex: 0, 
+    progress: 0 
+  },
+  2: {
+    id: 2,
+    name: "Train B",
+    pathCoordinates: allPathCoordinates[1],
+    latitude: allPathCoordinates[1][0][1], 
+    longitude: allPathCoordinates[1][0][0], 
+    active: true,
+    pathIndex: 0, 
+    progress: 0 
   }
+};
 
-  if (newLon < 79.5 || newLon > 82.0) {
-    deltaLon *= -1; 
-    newLon = train.longitude + deltaLon;
-  }
+const routes = allPathCoordinates.map((coordinates, index) => ({
+  id: index + 1,
+  coordinates: coordinates, 
+  color: 'blue', 
+  hasActiveTrain: false 
+}));
 
-  return {
-    latitude: parseFloat(newLat.toFixed(6)),
-    longitude: parseFloat(newLon.toFixed(6)),
-    directionLat: train.directionLat,
-    directionLon: train.directionLon,
-  };
-}
+function updateRouteActivity() {
 
-const trains = [
-  { id: 1, name: "Train A", latitude: 6.9271, longitude: 79.8612, directionLat: 0.001, directionLon: 0.001, active: true }, // Colombo
-  { id: 2, name: "Train B", latitude: 7.2906, longitude: 80.6337, directionLat: 0.001, directionLon: 0.001, active: true }, // Kandy
-  { id: 3, name: "Train C", latitude: 6.0535, longitude: 80.2210, directionLat: 0.001, directionLon: 0.001, active: true }, // Galle
-];
+  routes.forEach(route => route.hasActiveTrain = false);
 
-function generateAdditionalTrains(count) {
-  for (let i = 0; i < count; i++) {
-    const id = trains.length + 1;
-    const name = `Train ${String.fromCharCode(68 + i)}`; 
-    const latitude = faker.number.float({ min: 5.8, max: 9.8 });
-    const longitude = faker.number.float({ min: 79.5, max: 82.0 });
-
-    trains.push({
-      id,
-      name,
-      latitude,
-      longitude,
-      directionLat: 0.001,
-      directionLon: 0.001,
-      active: false,
-    });
-  }
-}
-
-const additionalTrainCount = faker.number.int({ min: 1, max: 5 });
-generateAdditionalTrains(additionalTrainCount);
-
-function startRandomTrain() {
-  const inactiveTrains = trains.filter(train => !train.active);
-  if (inactiveTrains.length > 0) {
-    const randomIndex = faker.number.int({ min: 0, max: inactiveTrains.length - 1 });
-    const trainToStart = inactiveTrains[randomIndex];
-    trainToStart.active = true;
-    trainToStart.startedAt = Date.now(); 
-    console.log(`Starting ${trainToStart.name}`);
-  }
-}
-
-function stopRandomTrain() {
-  const activeTrains = trains.filter(train => train.active && train.id > 3); 
-  if (activeTrains.length > 0) {
-    const trainsToStop = activeTrains.filter(train => {
-      return Date.now() - train.startedAt > 60000; 
-    });
-
-    if (trainsToStop.length > 0) {
-      const randomIndex = faker.number.int({ min: 0, max: trainsToStop.length - 1 });
-      const trainToStop = trainsToStop[randomIndex];
-      trainToStop.active = false;
-      console.log(`Stopping ${trainToStop.name}`);
-    }
-  }
-}
-
-function simulateTrainMovements() {
-  setInterval(() => {
-    trains.forEach((train) => {
-      if (train.active) {
-        const { latitude, longitude, directionLat, directionLon } = moveTrainWithinSriLanka(train);
-        train.latitude = latitude;
-        train.longitude = longitude;
-        train.directionLat = directionLat;
-        train.directionLon = directionLon;
-
-        const data = {
-          trainId: train.id,
-          trainName: train.name,
-          timestamp: new Date().toISOString(),
-          location: { latitude, longitude },
-        };
-        console.log('Generated data:', data);
-
-        axios.post('http://localhost:3000/trains', data)
-          .then(response => console.log('Data sent successfully'))
-          .catch(error => console.error('Error sending data:', error));
+  Object.values(trains).forEach(train => {
+    if (train.active) {
+      const routeIndex = allPathCoordinates.indexOf(train.pathCoordinates);
+      if (routeIndex !== -1) {
+        routes[routeIndex].hasActiveTrain = true;
       }
-    });
-  }, 30000); 
+    }
+  });
 }
 
-simulateTrainMovements();
+function saveRouteData() {
+  updateRouteActivity();
 
-setInterval(() => {
-  startRandomTrain();
-  stopRandomTrain();
-}, 60000);
+  Route.insertMany(routes)
+    .then(() => console.log('Routes saved to MongoDB with updated activity status'))
+    .catch(err => console.error('Error saving routes:', err));
+}
+
+function moveTrainAlongPath(train) {
+  if (!train.active) return;
+
+  const currentIndex = train.pathIndex;
+  const nextIndex = train.pathIndex + 1;
+
+  if (nextIndex >= train.pathCoordinates.length) {
+    train.active = false; 
+    console.log(`Train ${train.name} has reached the end of the path.`);
+    return;
+  }
+
+  const startPoint = train.pathCoordinates[currentIndex];
+  const endPoint = train.pathCoordinates[nextIndex];
+
+  train.progress += 0.005; 
+  if (train.progress > 1) {
+    train.pathIndex++;
+    train.progress = 0;
+    console.log(`Train ${train.name} advanced to segment ${train.pathIndex}`);
+    return;
+  }
+  
+  train.latitude = startPoint[1] + (endPoint[1] - startPoint[1]) * train.progress;
+  train.longitude = startPoint[0] + (endPoint[0] - startPoint[0]) * train.progress;
+
+  console.log(`Train ${train.name} moved to new position: (${train.latitude.toFixed(6)}, ${train.longitude.toFixed(6)})`);
+}
+
+function addRandomTrain() {
+  if (Object.keys(trains).length >= 12) {
+    console.log("Train limit reached. No more trains will be added.");
+    return;
+  }
+
+  const randomPathIndex = Math.floor(Math.random() * allPathCoordinates.length);
+  const pathCoordinates = allPathCoordinates[randomPathIndex];
+
+  const newTrainId = Object.keys(trains).length + 1; 
+  trains[newTrainId] = {
+    id: newTrainId,
+    name: `Train ${String.fromCharCode(64 + newTrainId)}`,
+    pathCoordinates,
+    latitude: pathCoordinates[0][1], 
+    longitude: pathCoordinates[0][0], 
+    active: true,
+    pathIndex: 0, 
+    progress: 0 
+  };
+
+  console.log(`Added new train: Train ${newTrainId}`);
+}
+
+function saveTrainData() {
+  Object.values(trains).forEach(train => {
+    moveTrainAlongPath(train);
+    const trainData = new Train({
+      id: train.id,
+      name: train.name,
+      latitude: train.latitude,
+      longitude: train.longitude,
+      timestamp: new Date(),
+    });
+    trainData.save();
+  });
+
+  saveRouteData(); 
+
+  if (Math.random() < 0.1) {
+    addRandomTrain();
+  }
+}
+
+setInterval(saveTrainData, 10000); 

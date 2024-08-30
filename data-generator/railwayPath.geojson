@@ -1,0 +1,173 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [79.8612, 6.9271],  
+          [80.5748, 7.2914]   
+        ]
+      },
+      "properties": {
+        "name": "Train 1: Colombo Fort to Kandy",
+        "id": 1
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [80.6391, 7.2995],  
+          [81.3403, 6.9364]   
+        ]
+      },
+      "properties": {
+        "name": "Train 2: Peradeniya Junction to Badulla",
+        "id": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [79.8498, 6.9330],  
+          [80.5760, 9.6684]   
+        ]
+      },
+      "properties": {
+        "name": "Train 3: Maradana to Jaffna",
+        "id": 3
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [80.6213, 7.2821],  
+          [80.3524, 6.9256]   
+        ]
+      },
+      "properties": {
+        "name": "Train 4: Polgahawela to Colombo Fort",
+        "id": 4
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [80.2113, 6.0481],  
+          [80.5292, 7.3442]   
+        ]
+      },
+      "properties": {
+        "name": "Train 5: Matara to Kurunegala",
+        "id": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [81.1192, 6.7318],  
+          [79.8485, 6.9377]   
+        ]
+      },
+      "properties": {
+        "name": "Train 6: Batticaloa to Maradana",
+        "id": 6
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [79.9794, 6.9420],  
+          [80.4313, 7.9736]   
+        ]
+      },
+      "properties": {
+        "name": "Train 7: Kelaniya to Anuradhapura",
+        "id": 7
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [80.3774, 7.0493], 
+          [81.1455, 6.9241]  
+        ]
+      },
+      "properties": {
+        "name": "Train 8: Ragama to Bandarawela",
+        "id": 8
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [79.8485, 6.9377],  
+          [80.6638, 7.2474]   
+        ]
+      },
+      "properties": {
+        "name": "Train 9: Maradana to Nawalapitiya",
+        "id": 9
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [80.5853, 7.1847],  
+          [81.2235, 6.0574]  
+        ]
+      },
+      "properties": {
+        "name": "Train 10: Gampola to Hambantota",
+        "id": 10
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [80.2813, 6.0595],  
+          [80.4283, 9.7417]   
+        ]
+      },
+      "properties": {
+        "name": "Train 11: Galle to Kilinochchi",
+        "id": 11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [80.6368, 7.2906],  
+          [80.3855, 9.4169]   
+        ]
+      },
+      "properties": {
+        "name": "Train 12: Peradeniya to Vavuniya",
+        "id": 12
+      }
+    }
+  ]
+}
