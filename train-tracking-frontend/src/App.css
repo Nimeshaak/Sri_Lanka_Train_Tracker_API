@@ -1,4 +1,47 @@
-/* src/App.css */
-.App {
+/* app.css */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.map-container {
   text-align: center;
+}
+
+.main-title {
+  font-size: 2em;
+  color: #333;
+  margin: 20px 0;
+}
+
+.search-input {
+  margin: 10px;
+  padding: 8px;
+  width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.toggle-routes-button {
+  margin: 10px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.toggle-routes-button:hover {
+  background-color: #0056b3;
+}
+
+.no-trains-message {
+  color: red;
+  margin: 10px;
+}
+
+.map {
+  height: 80vh; /* Adjust height as needed */
+  width: 100%;
 }

@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// Train schema
 const trainSchema = new mongoose.Schema({
   id: Number,
   name: String,

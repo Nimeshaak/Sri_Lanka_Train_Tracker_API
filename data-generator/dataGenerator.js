@@ -2,6 +2,7 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 const Train = require('../models/trainschema'); 
 const Route = require('../models/routeschema'); 
+const TrainHistory = require('../models/trainhistoryschema'); 
 
 mongoose.connect('mongodb://localhost:27017/trainDB', {
   useNewUrlParser: true,
@@ -42,7 +43,6 @@ const routes = allPathCoordinates.map((coordinates, index) => ({
 }));
 
 function updateRouteActivity() {
-
   routes.forEach(route => route.hasActiveTrain = false);
 
   Object.values(trains).forEach(train => {
@@ -58,8 +58,11 @@ function updateRouteActivity() {
 function saveRouteData() {
   updateRouteActivity();
 
-  Route.insertMany(routes)
-    .then(() => console.log('Routes saved to MongoDB with updated activity status'))
+  const activeRoutes = routes.filter(route => route.hasActiveTrain);
+
+  Route.deleteMany({}) 
+    .then(() => Route.insertMany(activeRoutes)) 
+    .then(() => console.log('Active routes saved to MongoDB with updated activity status'))
     .catch(err => console.error('Error saving routes:', err));
 }
 
@@ -117,16 +120,34 @@ function addRandomTrain() {
 }
 
 function saveTrainData() {
-  Object.values(trains).forEach(train => {
+
+  const activeTrains = Object.values(trains).filter(train => train.active);
+
+  activeTrains.forEach(train => {
     moveTrainAlongPath(train);
-    const trainData = new Train({
-      id: train.id,
+
+    Train.updateOne(
+      { id: train.id }, 
+      {
+        id: train.id,
+        name: train.name,
+        latitude: train.latitude,
+        longitude: train.longitude,
+        timestamp: new Date(),
+      },
+      { upsert: true } 
+    ).then(() => {
+      console.log(`Train ${train.name} data updated.`);
+    }).catch(err => console.error('Error updating train data:', err));
+
+    const trainHistoryData = new TrainHistory({
+      trainId: train.id,
       name: train.name,
       latitude: train.latitude,
       longitude: train.longitude,
       timestamp: new Date(),
     });
-    trainData.save();
+    trainHistoryData.save();
   });
 
   saveRouteData(); 
@@ -136,4 +157,4 @@ function saveTrainData() {
   }
 }
 
-setInterval(saveTrainData, 10000); 
+setInterval(saveTrainData, 60000);

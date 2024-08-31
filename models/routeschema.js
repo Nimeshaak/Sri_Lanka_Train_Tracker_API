@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 
-// Route schema
 const routeSchema = new mongoose.Schema({
   id: Number,
-  coordinates: [[Number]], 
+  coordinates: [[Number]],
   color: String,
   hasActiveTrain: Boolean 
 });
